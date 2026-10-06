@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KeyRelay · Bot 登录中继</title>
+    <meta
+      name="description"
+      content="让 Bot 完成登录，但永远不向 Bot 返回你的明文密码。"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/">
+        <span class="brand-mark">K</span>
+        <span>KeyRelay</span>
+      </a>
+      <span class="status"><i></i> 仅本机保管</span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">LOCAL CREDENTIAL BROKER</p>
+          <h1>让 Bot 登录，<br /><em>不把密码交给 Bot。</em></h1>
+          <p class="lede">
+            凭据经过 AES-256-GCM 加密并留在这台电脑。Bot 只能调用预先授权的登录动作，
+            不能读取、列出或导出你的密码。
+          </p>
+        </div>
+        <div class="flow" aria-label="工作流程">
+          <div><b>01</b><span>你保存凭据</span></div>
+          <div><b>02</b><span>Bot 请求登录</span></div>
+          <div><b>03</b><span>本机浏览器填充</span></div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="panel auth-panel">
+          <div class="panel-title">
+            <div>
+              <p class="eyebrow">CONTROL KEY</p>
+              <h2>连接本地保险箱</h2>
+            </div>
+            <span id="lockState" class="pill">未连接</span>
+          </div>
+          <p class="muted">从启动终端复制“管理令牌”。它只保存在当前浏览器标签页。</p>
+          <form id="unlockForm" class="inline-form">
+            <label class="sr-only" for="adminToken">管理令牌</label>
+            <input id="adminToken" type="password" autocomplete="off" placeholder="粘贴管理令牌" />
+            <button type="submit">解锁</button>
+          </form>
+          <p id="authMessage" class="message" role="status"></p>
+        </div>
+
+        <div class="panel sites-panel">
+          <div class="panel-title">
+            <div>
+              <p class="eyebrow">AUTHORIZED LOGINS</p>
+              <h2>已授权网站</h2>
+            </div>
+            <button id="openDialog" class="secondary" disabled>添加网站</button>
+          </div>
+          <div id="siteList" class="site-list">
+            <div class="empty">
+              <span>⌁</span>
+              <h3>保险箱尚未解锁</h3>
+              <p>输入管理令牌后，已授权的网站会显示在这里。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="siteDialog">
+      <form id="siteForm">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">NEW LOGIN RECIPE</p>
+            <h2>授权一个网站</h2>
+          </div>
+          <button type="button" class="icon-button" id="closeDialog" aria-label="关闭">×</button>
+        </div>
+        <div class="notice">只支持 HTTPS 公网网站。先从网站登录页检查输入框的 CSS 选择器。</div>
+        <div class="form-grid">
+          <label>显示名称<input name="name" required placeholder="例如：公司后台" /></label>
+          <label>登录地址<input name="login_url" type="url" required placeholder="https://example.com/login" /></label>
+          <label>账号<input name="username" required autocomplete="off" /></label>
+          <label>密码<input name="password" type="password" required autocomplete="new-password" /></label>
+          <label>账号选择器<input name="username_selector" required value="input[type='email']" /></label>
+          <label>密码选择器<input name="password_selector" required value="input[type='password']" /></label>
+          <label class="wide">提交按钮选择器<input name="submit_selector" required value="button[type='submit']" /></label>
+          <label class="wide">额外允许域名（逗号分隔）<input name="allowed_hosts" placeholder="sso.example.com, accounts.google.com" /></label>
+        </div>
+        <p id="formMessage" class="message" role="status"></p>
+        <div class="dialog-actions">
+          <button type="button" class="secondary" id="cancelDialog">取消</button>
+          <button type="submit">加密并保存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <footer>KeyRelay 不会绕过验证码、双重验证或网站安全策略。</footer>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>
